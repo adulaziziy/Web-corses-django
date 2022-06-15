@@ -1,0 +1,15 @@
+    {% extends 'base.html' %}
+
+    {% block content %}
+    <div class="user">
+      <h1 >USERS PAGE</h1>
+    </div >
+     
+      <ol class="user">
+        {% for user in users %}
+        <li>{{user.username}}</li>
+        {% endfor %}
+      </ol>
+    
+    {% endblock content %}
+   

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<h1>Tanlov qo'shish: {{ savol.question}}</h1>
+
+<form action="." method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" class="btn btn-outlinte-info mt-2" value="Saqlash">
+</form>
+{% endblock content%}
