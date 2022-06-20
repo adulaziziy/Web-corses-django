@@ -10,7 +10,7 @@
     {% endif %}
     <div class="card-body">
       <h5 class="card-title">{{new.title}}</h5>
-      <p class="card-text">{{ new.body }}</p>
+      <p class="card-text">{{ new.body|safe }}</p>
       <span class="btn btn-primary">{{ new.created }}</span>
       <div class="float-end">
         <a href="{% url 'new:remove' id=new.id%}" class="btn btn-danger">O'chirish</a>

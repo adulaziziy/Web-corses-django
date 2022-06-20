@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
 
-from .models import New
-from .forms import NewForm, NewFormMine
+from .models import New, Comment
+from .forms import NewForm, NewFormMine, CommentForm 
 
 def news_list(request):
     news = New.objects.all().order_by('-created') # quereset
@@ -12,7 +12,20 @@ def news_list(request):
 
 def news_detail(request, id):
     new = get_object_or_404(New, id=id)
-    return render(request, 'new/news_detail.html', {'new': new})
+    form = CommentForm()
+
+    if request.method == "POST":
+        #comment formaga postda kelayorgan malumotlarni
+        # berib validatsiyadan otqazamkiz
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = new
+            if request.user.is_authenticated:
+                comment.author = request.user
+            comment.save() 
+            return redirect("new:detail", id=id)
+    return render(request, 'new/news_detail.html', {'new': new, "form": form})
 
 def create(request):
     form = NewForm
@@ -58,4 +71,5 @@ def my_update(request, id):
 
 def my_detail(request, id):
     new = get_object_or_404(New, id=id)
+
     return render(request, 'nev/my_detail.html', {'new': new})
