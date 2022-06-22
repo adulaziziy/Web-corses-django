@@ -1,7 +1,8 @@
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404 
+from django.http import JsonResponse
 
-from .models import New, Comment
-from .forms import NewForm, NewFormMine, CommentForm 
+from .models import New, Comment, Like, Dislike
+from .forms import NewForm, NewFormMine, CommentForm
 
 def news_list(request):
     news = New.objects.all().order_by('-created') # quereset
@@ -72,4 +73,59 @@ def my_update(request, id):
 def my_detail(request, id):
     new = get_object_or_404(New, id=id)
 
-    return render(request, 'nev/my_detail.html', {'new': new})
+    return render(request, 'new/my_detail.html', {'new': new})
+
+
+def like(request, id):
+    new = get_object_or_404(New, id=id)
+    if request.user.is_authenticated:
+        if new.likes.filter(user=request.user).exists():
+            new.likes.get(user=request.user).delete()
+            return JsonResponse({
+                "success": True,
+                "message": "siz riyaksangizni qaytarib oldingiz!",
+                "likes": new.likes.count()
+                }
+            )
+
+        Like.objects.create(user=request.user, post=new)
+        return JsonResponse({
+            "success": True,
+            "message": "sizga yoqgan postlar safiga qo'shildi!",
+            "likes": new.likes.count()
+            }
+        )
+
+    return JsonResponse({
+            "success": False,
+            "message": "postga riyaksiya qoldirish uchun iltimos ro'yxatdan o'ting!",
+            }
+        )
+
+
+
+def dislike(request, id):
+    new = get_object_or_404(New, id=id)
+    if request.user.is_authenticated:
+        if new.dislikes.filter(user=request.user).exists():
+            new.dislikes.get(user=request.user).delete()
+            return JsonResponse({
+                "success": True,
+                "message": "siz riyaksangizni qaytarib oldingiz!",
+                "dislikes": new.dislikes.count()
+                }
+            )
+
+        Dislike.objects.create(user=request.user, post=new)
+        return JsonResponse({
+            "success": True,
+            "message": "sizga yoqmagan postlar safiga qo'shildi!",
+            "dislikes": new.dislikes.count()
+            }
+        )
+
+    return JsonResponse({
+            "success": False,
+            "message": "postga riyaksiya qoldirish uchun iltimos ro'yxatdan o'ting!",
+            }
+        )
