@@ -10,10 +10,20 @@ def news_list(request):
     context = {'news': news} 
     return render(request, 'new/news_list.html', context)
 
+    # bunyirda new methodidagi barcha objekit, yangi ikki yoki uc kundan ortiq 
+    # objekitni odik 
+    # bu narsa QUERESET diyiladi
+    # quereset ucun model method iwlamaydi
+    
+    # contex dictionary  bu tempilitga berib yuboriladingn ozgaruvcilar toplami   
+
 
 def news_detail(request, id):
     new = get_object_or_404(New, id=id)
     form = CommentForm()
+    # bitta nevni olyapmiz nev degan modelni barca metodlari icidan 
+    # wu narsa object diyiladi
+    # model methodlari faqat objekit ucun iwlaydi....
 
     if request.method == "POST":
         #comment formaga postda kelayorgan malumotlarni
@@ -79,12 +89,16 @@ def my_detail(request, id):
 def like(request, id):
     new = get_object_or_404(New, id=id)
     if request.user.is_authenticated:
+        if new.dislikes.filter(user=request.user).exists():
+            new.dislikes.get(user=request.user).delete()
+
         if new.likes.filter(user=request.user).exists():
             new.likes.get(user=request.user).delete()
             return JsonResponse({
                 "success": True,
                 "message": "siz riyaksangizni qaytarib oldingiz!",
-                "likes": new.likes.count()
+                "likes": new.like_count(),
+                "dislikes": new.dislike_count()
                 }
             )
 
@@ -92,7 +106,8 @@ def like(request, id):
         return JsonResponse({
             "success": True,
             "message": "sizga yoqgan postlar safiga qo'shildi!",
-            "likes": new.likes.count()
+           "likes": new.like_count(),
+           "dislikes": new.dislike_count()
             }
         )
 
@@ -107,12 +122,16 @@ def like(request, id):
 def dislike(request, id):
     new = get_object_or_404(New, id=id)
     if request.user.is_authenticated:
+        if new.likes.filter(user=request.user).exists():
+            new.likes.get(user=request.user).delete()
+
         if new.dislikes.filter(user=request.user).exists():
             new.dislikes.get(user=request.user).delete()
             return JsonResponse({
                 "success": True,
                 "message": "siz riyaksangizni qaytarib oldingiz!",
-                "dislikes": new.dislikes.count()
+                "likes": new.like_count(),
+                "dislikes": new.dislike_count()
                 }
             )
 
@@ -120,7 +139,8 @@ def dislike(request, id):
         return JsonResponse({
             "success": True,
             "message": "sizga yoqmagan postlar safiga qo'shildi!",
-            "dislikes": new.dislikes.count()
+            "likes": new.like_count(),
+            "dislikes": new.dislike_count()
             }
         )
 

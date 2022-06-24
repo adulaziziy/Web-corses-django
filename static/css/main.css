@@ -1,3 +1,20 @@
 /* Bu bizning pirayiktimizning css fayila */
 
+#like:hover, #dislike:hover{
+    cursor: pointer;
+}
 
+#active-reaction{
+    text-align: center;
+    color: rgb(93, 169, 6);
+}
+
+#warning{
+    text-align: center;
+    color: red;
+}
+
+#success{
+    text-align: center;
+    color: green;
+}

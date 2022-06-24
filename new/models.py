@@ -19,8 +19,18 @@ class New(models.Model):
         verbose_name = "yangilik"
         verbose_name_plural = "Yangiliklar"
 
+
     def __str__(self):
         return self .title
+
+
+    def dislike_count(self):
+        return self.dislikes.count()
+
+
+    def like_count(self):
+        return self.likes.count()
+    
 
 class Comment(models.Model):
     author = models.ForeignKey(
