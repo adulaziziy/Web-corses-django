@@ -1,14 +1,21 @@
+from django.views.generic import ListView
 from django.shortcuts import redirect, render, get_object_or_404 
 from django.http import JsonResponse
 
 from .models import New, Comment, Like, Dislike
 from .forms import NewForm, NewFormMine, CommentForm
 
-def news_list(request):
-    news = New.objects.all().order_by('-created') # quereset
-    # context deckaretion bu tempilrtga berib yuboriladigan o'zgaruvchilar to'plami
-    context = {'news': news} 
-    return render(request, 'new/news_list.html', context)
+class News(ListView):
+    queryset = New.objects.all().order_by('-created')
+    template_name = 'new/news_list.html'
+
+    paginate_by: int = 6
+
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
+
+news_list = News.as_view()
+
 
     # bunyirda new methodidagi barcha objekit, yangi ikki yoki uc kundan ortiq 
     # objekitni odik 

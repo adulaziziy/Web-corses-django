@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
      path('summernote/', include('django_summernote.urls')),
     path('savollar/', include('poll.urls', namespace='poll')),    
+    path('more/', include('extra.urls', namespace='extra')),    
     path('accounts/', include('userprofile.urls', namespace='userprofile')),
     path('news/', include('new.urls', namespace='new')),
     path('about/', groups_view, name="groups"),
